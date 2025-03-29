@@ -18,7 +18,7 @@ public class FloodFillGUI extends JFrame {
             System.exit(1);
         }
 
-        // Cria JLabel com a imagem
+        // Criar JLabel com a imagem
         imageLabel = new JLabel(new ImageIcon(image));
         add(imageLabel, BorderLayout.CENTER);
 
@@ -29,21 +29,34 @@ public class FloodFillGUI extends JFrame {
         // Inicia o Flood Fill automaticamente
         iniciarFloodFill(Color.BLUE.getRGB());
 
-        // Salva a imagem 
+        // Salvar a imagem
         ImageSaver.saveImage(image, "output.png");
     }
 
     private void iniciarFloodFill(int novaCor) {
-        for (int y = 0; y < image.getHeight(); y++) {
-            for (int x = 0; x < image.getWidth(); x++) {
-                if (ehPreto(image.getRGB(x, y))) {
-                    // Realiza o Flood Fill para todos os pixels válidos
-                    FloodFillPilha.floodFill(image, x, y, novaCor);
-                    imageLabel.repaint();  // Pode ser chamado após o preenchimento completo
-                    // Não use 'return' aqui, assim a execução continua
+        // Cria um novo thread para o Flood Fill, para não bloquear a interface
+        new Thread(() -> {
+            final int delay = 1;
+
+            for (int y = 0; y < image.getHeight(); y++) {
+                for (int x = 0; x < image.getWidth(); x++) {
+                    if (ehPreto(image.getRGB(x, y))) {
+                        // Preenche o pixel atual
+                        FloodFillPilha.floodFill(image, x, y, novaCor);
+
+                        // Atualiza a interface gráfica para mostrar a animacao de pintar
+                        SwingUtilities.invokeLater(() -> imageLabel.repaint());
+
+                        // Adiciona um  delay para fazer o preenchimento aparecer gradualmente
+                        try {
+                            Thread.sleep(delay);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    }
                 }
             }
-        }
+        }).start();  // Inicia o thread para evitar bloquear a interface
     }
 
     private boolean ehPreto(int cor) {
@@ -54,6 +67,6 @@ public class FloodFillGUI extends JFrame {
     }
 
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> new FloodFillGUI("Trabalho-Estrutura-de-Dados-main/FloodFill Pilha/images/bolaVolei2.png"));
+        SwingUtilities.invokeLater(() -> new FloodFillGUI("Trabalho-Estrutura-de-Dados-main/FloodFill Pilha/images/bolaVolei.jpg"));
     }
 }
