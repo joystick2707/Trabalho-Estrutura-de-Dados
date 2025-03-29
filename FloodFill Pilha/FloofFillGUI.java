@@ -1,14 +1,11 @@
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.Queue;
 import javax.imageio.ImageIO;
-
 
 public class FloodFillGUI extends JFrame {
     private BufferedImage image;
@@ -17,7 +14,7 @@ public class FloodFillGUI extends JFrame {
     private Timer timer;
 
     public FloodFillGUI(String imagePath) {
-        setTitle("Flood Fill - Animação");
+        setTitle("Flood Fill - Automático");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(new BorderLayout());
 
@@ -32,17 +29,12 @@ public class FloodFillGUI extends JFrame {
         imageLabel = new JLabel(new ImageIcon(image));
         add(imageLabel, BorderLayout.CENTER);
 
-        // Evento de clique para iniciar o Flood Fill animado
-        imageLabel.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                iniciarFloodFillAnimado(e.getX(), e.getY(), Color.RED.getRGB());
-            }
-        });
-
         setSize(image.getWidth(), image.getHeight());
         setLocationRelativeTo(null);
         setVisible(true);
+
+        // Inicia o Flood Fill automaticamente
+        iniciarFloodFillAutomatico(Color.RED.getRGB());
     }
 
     private BufferedImage loadImage(String path) {
@@ -54,23 +46,36 @@ public class FloodFillGUI extends JFrame {
         }
     }
 
+    private void iniciarFloodFillAutomatico(int novaCor) {
+        for (int y = 0; y < image.getHeight(); y++) {
+            for (int x = 0; x < image.getWidth(); x++) {
+                if (ehPreto(image.getRGB(x, y))) {
+                    iniciarFloodFillAnimado(x, y, novaCor);
+                    return;
+                }
+            }
+        }
+    }
+
     private void iniciarFloodFillAnimado(int x, int y, int novaCor) {
         int corOriginal = image.getRGB(x, y);
-
-        // Verifique se a cor é preta (0x000000) antes de iniciar o Flood Fill
-        if (corOriginal != 0x000000) return;
+        if (!ehPreto(corOriginal)) return;
 
         pixelsParaPintar = new LinkedList<>();
         pixelsParaPintar.add(new Point(x, y));
-        image.setRGB(x, y, novaCor); // Define o primeiro pixel antes de iniciar
 
-        timer = new Timer(50, e -> preencherProximoPixel(corOriginal, novaCor)); // Atualiza a cada 50ms
-        // Atualiza rapidamente
+        timer = new Timer(1, e -> preencherProximoPixel(novaCor));
         timer.start();
     }
 
+    private boolean ehPreto(int cor) {
+        int r = (cor >> 16) & 0xFF;
+        int g = (cor >> 8) & 0xFF;
+        int b = cor & 0xFF;
+        return r < 30 && g < 30 && b < 30; // Considera tons próximos de preto
+    }
 
-    private void preencherProximoPixel(int corOriginal, int novaCor) {
+    private void preencherProximoPixel(int novaCor) {
         if (pixelsParaPintar.isEmpty()) {
             timer.stop();
             return;
@@ -80,31 +85,19 @@ public class FloodFillGUI extends JFrame {
         int px = p.x, py = p.y;
 
         if (px < 0 || py < 0 || px >= image.getWidth() || py >= image.getHeight()) return;
-        if (image.getRGB(px, py) != corOriginal) return;
+        if (!ehPreto(image.getRGB(px, py))) return;
 
         image.setRGB(px, py, novaCor);
 
-        // Adiciona os próximos pixels apenas se ainda forem da cor original
-        if (px + 1 < image.getWidth() && image.getRGB(px + 1, py) == corOriginal) {
-            pixelsParaPintar.add(new Point(px + 1, py));
-        }
-        if (px - 1 >= 0 && image.getRGB(px - 1, py) == corOriginal) {
-            pixelsParaPintar.add(new Point(px - 1, py));
-        }
-        if (py + 1 < image.getHeight() && image.getRGB(px, py + 1) == corOriginal) {
-            pixelsParaPintar.add(new Point(px, py + 1));
-        }
-        if (py - 1 >= 0 && image.getRGB(px, py - 1) == corOriginal) {
-            pixelsParaPintar.add(new Point(px, py - 1));
-        }
+        pixelsParaPintar.add(new Point(px + 1, py));
+        pixelsParaPintar.add(new Point(px - 1, py));
+        pixelsParaPintar.add(new Point(px, py + 1));
+        pixelsParaPintar.add(new Point(px, py - 1));
 
-        // Atualiza a imagem na interface
-        imageLabel.setIcon(new ImageIcon(image));  // Força o JLabel a atualizar com a nova imagem
         imageLabel.repaint();
     }
 
-
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> new FloodFillGUI("src/images/testeTrabalho.jpg"));
+        SwingUtilities.invokeLater(() -> new FloodFillGUI("src/images/bolaVolei.jpg"));
     }
 }
