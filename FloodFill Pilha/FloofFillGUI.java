@@ -18,7 +18,7 @@ public class FloodFillGUI extends JFrame {
             System.exit(1);
         }
 
-        // Criar JLabel com a imagem
+        // Cria JLabel com a imagem
         imageLabel = new JLabel(new ImageIcon(image));
         add(imageLabel, BorderLayout.CENTER);
 
@@ -29,7 +29,7 @@ public class FloodFillGUI extends JFrame {
         // Inicia o Flood Fill automaticamente
         iniciarFloodFill(Color.BLUE.getRGB());
 
-        // Salvar a imagem processada
+        // Salva a imagem 
         ImageSaver.saveImage(image, "output.png");
     }
 
@@ -45,8 +45,6 @@ public class FloodFillGUI extends JFrame {
             }
         }
     }
-
-
 
     private boolean ehPreto(int cor) {
         int r = (cor >> 16) & 0xFF;
