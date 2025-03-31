@@ -32,7 +32,7 @@ public class FloodFillGUI extends JFrame {
 
     private void iniciarFloodFill(int novaCor) {
         (new Thread(() -> {
-            int delay = true;
+            int delay = 1;
 
             for(int y = 0; y < this.image.getHeight(); ++y) {
                 for(int x = 0; x < this.image.getWidth(); ++x) {
@@ -61,10 +61,9 @@ public class FloodFillGUI extends JFrame {
         int b = cor & 255;
         return r < 100 && g < 100 && b < 100;
     }
-
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
-            new FloodFillGUI("C:/Users/miche/Downloads/Trabalho-Estrutura-de-Dados-main/Trabalho-Estrutura-de-Dados-main/FloodFill Pilha/Images/bolavolei.jpg");
+            new FloodFillGUI("/Users/bryan/Downloads/Trabalho-Estrutura-de-Dados-main 2/Fila/images/bolavolei3.jpg");
         });
     }
 }
