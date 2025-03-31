@@ -11,30 +11,31 @@ public class FloodFillGUI extends JFrame {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(new BorderLayout());
 
-        // Carregar imagem usando a classe ImageLoader
+        // Carrega a imagem com a ImageLoader
         image = ImageLoader.loadImage(imagePath);
         if (image == null) {
             System.out.println("Erro ao carregar a imagem.");
             System.exit(1);
         }
 
-        // Criar JLabel com a imagem
+        // Cria JLabel com a imagem
         imageLabel = new JLabel(new ImageIcon(image));
         add(imageLabel, BorderLayout.CENTER);
 
         setSize(image.getWidth(), image.getHeight());
         setLocationRelativeTo(null);
+        setSize(500,500);
         setVisible(true);
 
-        // Inicia o Flood Fill automaticamente
+        // Inicia o Flood Fill
         iniciarFloodFill(Color.BLUE.getRGB());
 
-        // Salvar a imagem
+        // Salva a imagem
         ImageSaver.saveImage(image, "output.png");
     }
 
     private void iniciarFloodFill(int novaCor) {
-        // Cria um novo thread para o Flood Fill, para não bloquear a interface
+        // Cria um novo thread para o Flood Fill, só para não bloquear a interface
         new Thread(() -> {
             final int delay = 1;
 
@@ -67,6 +68,6 @@ public class FloodFillGUI extends JFrame {
     }
 
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> new FloodFillGUI("Trabalho-Estrutura-de-Dados-main/FloodFill Pilha/images/bolaVolei.jpg"));
+        SwingUtilities.invokeLater(() -> new FloodFillGUI("/Users/bryan/Downloads/Trabalho-Estrutura-de-Dados-main/FloodFill Pilha/images/bolaVolei3.jpg"));
     }
 }
